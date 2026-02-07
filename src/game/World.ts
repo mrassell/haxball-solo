@@ -1,5 +1,5 @@
 import { Player, Ball, Entity, ENTITY_CONSTANTS } from './Entities';
-import { vec2, vec2Sub, vec2Normalize, vec2Distance, vec2Dot } from './Utils';
+import { vec2, vec2Sub, vec2Normalize, vec2Distance, vec2Dot, vec2Length } from './Utils';
 import { detectCircleCollision, resolveCircleCollision, detectWallCollision, resolveWallCollision, checkGoal } from './Physics';
 
 /**
@@ -229,15 +229,44 @@ export class World {
       const kickRadius = ENTITY_CONSTANTS.KICK_RADIUS;
       
       if (isFinite(dist) && dist <= kickRadius && !this.ball.isFrozen) {
-        // Calculate direction from player to ball
-        const direction = vec2Normalize(vec2Sub(this.ball.position, player.position));
+        // Determine kick direction based on player's movement
+        let direction: { x: number; y: number } | null = null;
+        
+        // Check if player is moving (has significant velocity or input)
+        const velocityMag = Math.sqrt(player.velocity.x * player.velocity.x + player.velocity.y * player.velocity.y);
+        const inputMag = Math.sqrt(player.inputAcceleration.x * player.inputAcceleration.x + player.inputAcceleration.y * player.inputAcceleration.y);
+        
+        // Use movement direction if player is moving significantly
+        if (velocityMag > 10 || inputMag > 0.1) {
+          // Prefer input direction (more responsive), fall back to velocity
+          if (inputMag > 0.1) {
+            direction = vec2Normalize(player.inputAcceleration);
+          } else if (velocityMag > 10) {
+            direction = vec2Normalize(player.velocity);
+          }
+        }
+        
+        // If not moving, kick toward opponent's goal (forward direction)
+        if (!direction) {
+          const centerX = ENTITY_CONSTANTS.ARENA_WIDTH / 2;
+          // Human players kick right (toward bot goal), bot players kick left (toward human goal)
+          const forwardX = player.isHuman ? 1 : -1;
+          // Slight angle toward ball's y position for better control
+          const ballOffsetY = this.ball.position.y - player.position.y;
+          const forwardY = Math.max(-0.3, Math.min(0.3, ballOffsetY / 100)); // Limit angle
+          direction = vec2Normalize({ x: forwardX, y: forwardY });
+        }
         
         if (direction && isFinite(direction.x) && isFinite(direction.y)) {
-          // Apply kick force
-          const kickForce = ENTITY_CONSTANTS.KICK_FORCE;
-          this.ball.velocity.x = direction.x * kickForce;
-          this.ball.velocity.y = direction.y * kickForce;
-          return true;
+          // Check if direction is valid (not zero vector)
+          const dirMag = vec2Length(direction);
+          if (dirMag > 0.1) {
+            // Apply kick force
+            const kickForce = ENTITY_CONSTANTS.KICK_FORCE;
+            this.ball.velocity.x = direction.x * kickForce;
+            this.ball.velocity.y = direction.y * kickForce;
+            return true;
+          }
         }
       }
       return false;
