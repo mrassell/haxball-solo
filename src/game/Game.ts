@@ -18,7 +18,6 @@ export class Game {
   private onScoreUpdate?: (score: { human: number; bot: number }) => void;
 
   constructor(canvas: HTMLCanvasElement, gameMode: GameMode = GameMode.OneVsOne) {
-    this.canvas = canvas;
     this.world = new World(gameMode);
     this.input = new Input();
     this.bot = new Bot();
