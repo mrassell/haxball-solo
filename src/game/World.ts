@@ -1,5 +1,5 @@
 import { Player, Ball, Entity, ENTITY_CONSTANTS } from './Entities';
-import { Vec2, vec2, vec2Sub, vec2Normalize, vec2Distance } from './Utils';
+import { vec2, vec2Sub, vec2Normalize, vec2Distance, vec2Dot } from './Utils';
 import { detectCircleCollision, resolveCircleCollision, detectWallCollision, resolveWallCollision, checkGoal } from './Physics';
 
 /**

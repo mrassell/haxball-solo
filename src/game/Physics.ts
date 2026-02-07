@@ -1,5 +1,5 @@
-import { Entity, Player, Ball, ENTITY_CONSTANTS, EntityType } from './Entities';
-import { Vec2, vec2, vec2Sub, vec2Normalize, vec2Dot, vec2Scale, vec2Add, vec2Length } from './Utils';
+import { Entity, Ball, ENTITY_CONSTANTS, EntityType } from './Entities';
+import { Vec2, vec2, vec2Sub, vec2Normalize, vec2Dot, vec2Scale } from './Utils';
 
 /**
  * Physics collision detection and resolution
@@ -48,7 +48,7 @@ export function detectCircleCollision(a: Entity, b: Entity): Collision | null {
 /**
  * Resolve circle-circle collision using impulse method
  */
-export function resolveCircleCollision(collision: Collision, dt: number): void {
+export function resolveCircleCollision(collision: Collision, _dt: number): void {
   const { entityA, entityB, normal, penetration } = collision;
 
   // Positional correction to prevent sinking
@@ -147,7 +147,7 @@ export function detectWallCollision(entity: Entity): WallCollision | null {
 /**
  * Resolve wall collision
  */
-export function resolveWallCollision(collision: WallCollision, dt: number): void {
+export function resolveWallCollision(collision: WallCollision, _dt: number): void {
   const { entity, normal, penetration } = collision;
 
   // Positional correction

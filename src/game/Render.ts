@@ -26,7 +26,6 @@ export class Render {
 
   private setupCanvas(): void {
     const dpr = window.devicePixelRatio || 1;
-    const rect = this.canvas.getBoundingClientRect();
     this.canvas.width = ENTITY_CONSTANTS.ARENA_WIDTH * dpr;
     this.canvas.height = ENTITY_CONSTANTS.ARENA_HEIGHT * dpr;
     this.canvas.style.width = `${ENTITY_CONSTANTS.ARENA_WIDTH}px`;
@@ -221,7 +220,7 @@ export class Render {
     this.ctx.setLineDash([]);
   }
 
-  private drawDebug(world: World): void {
+  private drawDebug(_world: World): void {
     // Draw collision normals and penetration (simplified)
     this.ctx.strokeStyle = '#00ff00';
     this.ctx.lineWidth = 1;

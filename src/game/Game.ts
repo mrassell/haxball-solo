@@ -12,7 +12,6 @@ export class Game {
   private input: Input;
   private bot: Bot;
   private render: Render;
-  private canvas: HTMLCanvasElement;
   private lastTime: number;
   private accumulator: number;
   private readonly FIXED_DT = 1 / 60; // 60Hz physics
