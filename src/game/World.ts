@@ -229,24 +229,23 @@ export class World {
       const kickRadius = ENTITY_CONSTANTS.KICK_RADIUS;
       
       if (isFinite(dist) && dist <= kickRadius && !this.ball.isFrozen) {
-        // Determine kick direction based on player's movement
+        // Determine kick direction - ALWAYS prioritize player input
         let direction: { x: number; y: number } | null = null;
         
-        // Check if player is moving (has significant velocity or input)
-        const velocityMag = Math.sqrt(player.velocity.x * player.velocity.x + player.velocity.y * player.velocity.y);
+        // Check input magnitude
         const inputMag = Math.sqrt(player.inputAcceleration.x * player.inputAcceleration.x + player.inputAcceleration.y * player.inputAcceleration.y);
+        const velocityMag = Math.sqrt(player.velocity.x * player.velocity.x + player.velocity.y * player.velocity.y);
         
-        // Use movement direction if player is moving significantly
-        if (velocityMag > 10 || inputMag > 0.1) {
-          // Prefer input direction (more responsive), fall back to velocity
-          if (inputMag > 0.1) {
-            direction = vec2Normalize(player.inputAcceleration);
-          } else if (velocityMag > 10) {
-            direction = vec2Normalize(player.velocity);
-          }
+        // ALWAYS use input direction if there's any input (even tiny)
+        if (inputMag > 0.01) {
+          direction = vec2Normalize(player.inputAcceleration);
+        } 
+        // If no input but moving, use velocity direction
+        else if (velocityMag > 5) {
+          direction = vec2Normalize(player.velocity);
         }
         
-        // If not moving, kick toward opponent's goal (forward direction)
+        // If not moving and no input, kick toward opponent's goal (forward direction)
         if (!direction) {
           const centerX = ENTITY_CONSTANTS.ARENA_WIDTH / 2;
           // Human players kick right (toward bot goal), bot players kick left (toward human goal)
