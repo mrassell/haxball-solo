@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HaxBall Single Player</title>
+</head>
+<body>
+  <div id="app">
+    <div class="ui-container">
+      <div class="score-container">
+        <div id="scoreDisplay">Human: 0 - Bot: 0</div>
+      </div>
+      
+      <div class="controls-container">
+        <div class="control-group">
+          <label for="gameModeSelect">Game Mode:</label>
+          <select id="gameModeSelect">
+            <option value="1v1">1v1</option>
+            <option value="2v2">2v2</option>
+            <option value="3v3">3v3</option>
+          </select>
+        </div>
+        
+        <button id="resetButton">Reset</button>
+      </div>
+      
+      <div id="controlsHint" class="controls-hint">
+        <div>WASD or Arrow Keys: Move</div>
+        <div>Spacebar: Kick/Pass Ball (when in range)</div>
+        <div>P: Pause</div>
+      </div>
+    </div>
+    
+    <canvas id="gameCanvas"></canvas>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

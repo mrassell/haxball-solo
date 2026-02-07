@@ -1,0 +1,118 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #1a1a1a;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.ui-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 900px;
+  max-width: 100%;
+}
+
+.score-container {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 10px;
+  background: #2a2a2a;
+  border-radius: 8px;
+}
+
+.controls-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 15px;
+  background: #2a2a2a;
+  border-radius: 8px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.control-group label {
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#gameModeSelect {
+  padding: 6px 12px;
+  font-size: 14px;
+  background: #3a3a3a;
+  color: white;
+  border: 1px solid #4a4a4a;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#gameModeSelect:hover {
+  background: #4a4a4a;
+}
+
+#resetButton {
+  padding: 8px 16px;
+  font-size: 14px;
+  background: #4a9eff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#resetButton:hover {
+  background: #3a8eef;
+}
+
+#resetButton:active {
+  background: #2a7edf;
+}
+
+.controls-hint {
+  font-size: 12px;
+  color: #aaaaaa;
+  text-align: center;
+  padding: 10px;
+  background: #2a2a2a;
+  border-radius: 8px;
+}
+
+.controls-hint div {
+  margin: 4px 0;
+}
+
+#gameCanvas {
+  border: 2px solid #4a4a4a;
+  border-radius: 8px;
+  background: #000;
+  display: block;
+}
+
+input[type="checkbox"] {
+  cursor: pointer;
+}
