@@ -111,7 +111,9 @@ export class Game {
 
       // Handle kick (spacebar) - simple: always kick in movement direction
       if (this.input.isKickJustPressed()) {
-        this.world.tryKick(this.world.humanPlayer);
+        // Get fresh input direction at the moment of kick
+        const currentInput = this.input.getPlayerInput();
+        this.world.tryKick(this.world.humanPlayer, currentInput);
       }
 
       // Update all bot players (opponents and teammates)

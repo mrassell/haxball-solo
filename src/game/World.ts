@@ -1,5 +1,5 @@
 import { Player, Ball, Entity, ENTITY_CONSTANTS } from './Entities';
-import { vec2, vec2Sub, vec2Normalize, vec2Distance, vec2Dot, vec2Length } from './Utils';
+import { Vec2, vec2, vec2Sub, vec2Normalize, vec2Distance, vec2Dot, vec2Length } from './Utils';
 import { detectCircleCollision, resolveCircleCollision, detectWallCollision, resolveWallCollision, checkGoal } from './Physics';
 
 /**
@@ -212,7 +212,7 @@ export class World {
     this.resetKickoff();
   }
 
-  tryKick(player: Player): boolean {
+  tryKick(player: Player, inputDirection?: Vec2): boolean {
     try {
       if (!player || !this.ball) {
         return false;
@@ -229,38 +229,38 @@ export class World {
       const kickRadius = ENTITY_CONSTANTS.KICK_RADIUS;
       
       if (isFinite(dist) && dist <= kickRadius && !this.ball.isFrozen) {
-        // Simple kick: use player's input direction, or velocity if no input, or forward if stationary
-        let direction: { x: number; y: number };
+        // SIMPLE KICK: Ball goes in direction from player to ball (where ball is relative to player)
+        // This is how haxball.com works - you kick the ball away from you toward where it is
         
-        // Check if player has input (movement keys pressed)
-        const inputMag = Math.sqrt(player.inputAcceleration.x * player.inputAcceleration.x + player.inputAcceleration.y * player.inputAcceleration.y);
-        const velocityMag = Math.sqrt(player.velocity.x * player.velocity.x + player.velocity.y * player.velocity.y);
+        // Calculate direction from player to ball
+        const toBall = vec2Sub(this.ball.position, player.position);
+        let direction = vec2Normalize(toBall);
         
-        // Priority 1: Use input direction if player is pressing keys
-        if (inputMag > 0.001) {
-          direction = vec2Normalize(player.inputAcceleration);
-        }
-        // Priority 2: Use velocity direction if player is moving
-        else if (velocityMag > 1) {
-          direction = vec2Normalize(player.velocity);
-        }
-        // Priority 3: Kick forward (toward opponent goal) if stationary
-        else {
-          // Human players kick right, bot players kick left
-          const forwardX = player.isHuman ? 1 : -1;
-          direction = vec2Normalize({ x: forwardX, y: 0 });
-        }
-        
-        // Apply kick force in the determined direction
-        if (direction && isFinite(direction.x) && isFinite(direction.y)) {
-          const dirMag = vec2Length(direction);
-          if (dirMag > 0.1) {
-            const kickForce = ENTITY_CONSTANTS.KICK_FORCE;
-            this.ball.velocity.x = direction.x * kickForce;
-            this.ball.velocity.y = direction.y * kickForce;
-            return true;
+        // If direction is invalid (ball exactly on player), use input direction or forward
+        const dirMag = vec2Length(direction);
+        if (dirMag < 0.1) {
+          // Ball is exactly on player - use movement direction if available
+          if (inputDirection && (Math.abs(inputDirection.x) > 0.01 || Math.abs(inputDirection.y) > 0.01)) {
+            direction = { x: inputDirection.x, y: inputDirection.y };
+          } else if (Math.abs(player.inputAcceleration.x) > 0.01 || Math.abs(player.inputAcceleration.y) > 0.01) {
+            direction = { x: player.inputAcceleration.x, y: player.inputAcceleration.y };
+          } else {
+            // No input - kick forward
+            const forwardX = player.isHuman ? 1 : -1;
+            direction = { x: forwardX, y: 0 };
           }
         }
+        
+        // Push ball slightly away from player to prevent immediate collision
+        const pushDistance = player.radius + this.ball.radius + 2;
+        this.ball.position.x = player.position.x + direction.x * pushDistance;
+        this.ball.position.y = player.position.y + direction.y * pushDistance;
+        
+        // Apply kick force in the determined direction
+        const kickForce = ENTITY_CONSTANTS.KICK_FORCE;
+        this.ball.velocity.x = direction.x * kickForce;
+        this.ball.velocity.y = direction.y * kickForce;
+        return true;
       }
       return false;
     } catch (error) {
