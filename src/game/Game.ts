@@ -109,22 +109,9 @@ export class Game {
       const playerInput = this.input.getPlayerInput();
       this.world.humanPlayer.inputAcceleration = playerInput;
 
-      // Handle kick/pass (spacebar)
+      // Handle kick (spacebar) - simple: always kick in movement direction
       if (this.input.isKickJustPressed()) {
-        // If player has input direction, prioritize kick over pass
-        const playerInput = this.input.getPlayerInput();
-        const hasInput = Math.abs(playerInput.x) > 0.01 || Math.abs(playerInput.y) > 0.01;
-        
-        if (hasInput) {
-          // Player is moving - kick in that direction, don't pass
-          this.world.tryKick(this.world.humanPlayer);
-        } else {
-          // Player is stationary - try to pass first, then kick if no good pass available
-          const passedTo = this.world.tryPass(this.world.humanPlayer);
-          if (!passedTo) {
-            this.world.tryKick(this.world.humanPlayer);
-          }
-        }
+        this.world.tryKick(this.world.humanPlayer);
       }
 
       // Update all bot players (opponents and teammates)
